@@ -1,8 +1,7 @@
-
 name: Build & Release ZIP
 
 on:
-  workflow_dispatch:   # يدوي فقط
+  workflow_dispatch:
   push:
     branches: [ master, main ]
 
@@ -12,22 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-       
-      - name: Install dependencies
-        run: npm install
+      - name: Create dist folder
+        run: mkdir -p dist
 
-      - name: Build project
-        run: npm run build
-
-      - name: Upload dist as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/
+      - name: Copy all files to dist
+        run: cp -r * dist/ 2>/dev/null || true
 
       - name: ZIP dist
         run: cd dist && zip -r ../dist.zip .
@@ -35,8 +23,8 @@ jobs:
       - name: Upload ZIP to Release
         uses: ncipollo/release-action@v1
         with:
-          tag: v1.0.3
-          name: Build v1.0.3
+          tag: v1.0.4
+          name: Build v1.0.4
           artifacts: "dist.zip"
           replacesArtifacts: true
           token: ${{ secrets.GITHUB_TOKEN }}
